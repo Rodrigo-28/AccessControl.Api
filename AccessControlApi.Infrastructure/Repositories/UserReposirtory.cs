@@ -2,7 +2,6 @@
 using AccessControlApi.Domian.Models;
 using AccessControlApi.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace AccessControlApi.Infrastructure.Repositories
 {
@@ -40,10 +39,7 @@ namespace AccessControlApi.Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.Deleted);
         }
 
-        public async Task<User?> GetOne(Expression<Func<User, bool>> predicate)
-        {
-            return await _context.Users.FirstOrDefaultAsync(predicate);
-        }
+
 
         public async Task<User> Update(User user)
         {
@@ -64,5 +60,12 @@ namespace AccessControlApi.Infrastructure.Repositories
                 .Include(u => u.Role)
                 .ToListAsync();
         }
+
+        public async Task<User?> GetOneByEmail(string email)
+        {
+            return await _context.Users.Where(u => u.Email == email && !u.Deleted).FirstOrDefaultAsync();
+        }
+
+
     }
 }

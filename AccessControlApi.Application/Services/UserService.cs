@@ -5,7 +5,6 @@ using AccessControlApi.Application.Interfaces;
 using AccessControlApi.Domian.Interfaces;
 using AccessControlApi.Domian.Models;
 using AutoMapper;
-using System.Linq.Expressions;
 
 namespace AccessControlApi.Application.Services
 {
@@ -25,7 +24,7 @@ namespace AccessControlApi.Application.Services
         }
         public async Task<UserResponseDto> Create(CreateUserDto createUserDto)
         {
-            var userExist = await _userRepository.GetOne(u => u.Email == createUserDto.Email);
+            var userExist = await _userRepository.GetOneByEmail(createUserDto.Email);
             if (userExist != null)
             {
                 throw new BadRequestException($"Already exist an user with this email {createUserDto.Email}")
@@ -76,9 +75,9 @@ namespace AccessControlApi.Application.Services
             return _mapper.Map<UserResponseDto>(user);
         }
 
-        public async Task<User> GetOne(Expression<Func<User, bool>> predicate)
+        public async Task<User> GetOneByEmail(string email)
         {
-            var user = await _userRepository.GetOne(predicate);
+            var user = await _userRepository.GetOneByEmail(email);
             if (user == null)
             {
                 throw new NotFoundException()
@@ -87,6 +86,11 @@ namespace AccessControlApi.Application.Services
                 };
             }
             return user;
+        }
+
+        public Task<bool> IsFirstLogin(int userId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<UserResponseDto> Update(int userId, UpdateUserDto updateUserDto)

@@ -1,5 +1,4 @@
 ﻿using AccessControlApi.Domian.Models;
-using System.Linq.Expressions;
 
 namespace AccessControlApi.Domian.Interfaces
 {
@@ -9,9 +8,10 @@ namespace AccessControlApi.Domian.Interfaces
         Task<User?> GetOne(int userId);
         Task<User> Create(User user);
         Task<User> Update(User user);
-        Task<User?> GetOne(Expression<Func<User, bool>> predicate);
+        Task<User?> GetOneByEmail(string email);
         Task<bool> Delete(User user);
         Task<User?> GetOneWithRole(int userId);
         Task<IEnumerable<User>> GetAllWithRoles();
+
     }
 }

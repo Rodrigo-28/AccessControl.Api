@@ -20,7 +20,7 @@ namespace AccessControlApi.Application.Services
         }
         public async Task<LoginResponseDto> Login(LoginRequestDto userDto)
         {
-            var user = await _userService.GetOne(u => u.Email == userDto.Email);
+            var user = await _userService.GetOneByEmail(userDto.Email);
 
             if (user == null)
             {
@@ -37,8 +37,10 @@ namespace AccessControlApi.Application.Services
                     ErrorCode = "002"
                 };
             }
+
+
             var token = _jwtTokenService.GenerateJwtToken(user);
-            return new LoginResponseDto { Token = token };
+            return new LoginResponseDto { Token = token, FirstLogin = user.FirstLogin };
 
         }
     }

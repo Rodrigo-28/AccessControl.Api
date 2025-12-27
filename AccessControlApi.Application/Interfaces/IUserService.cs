@@ -1,7 +1,6 @@
 ﻿using AccessControlApi.Application.Dtos.Requests;
 using AccessControlApi.Application.Dtos.Responses;
 using AccessControlApi.Domian.Models;
-using System.Linq.Expressions;
 
 namespace AccessControlApi.Application.Interfaces
 {
@@ -13,6 +12,7 @@ namespace AccessControlApi.Application.Interfaces
 
         Task<UserResponseDto> Update(int userId, UpdateUserDto updateUserDto);
         Task<GenericResponseDto> Delete(int userId);
-        Task<User> GetOne(Expression<Func<User, bool>> predicate);
+        Task<User> GetOneByEmail(string email);
+        Task<bool> IsFirstLogin(int userId);
     }
 }
