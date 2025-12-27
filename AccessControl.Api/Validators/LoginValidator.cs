@@ -14,5 +14,6 @@ namespace AccessControlApi.Validators
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required");
         }
+
     }
 }

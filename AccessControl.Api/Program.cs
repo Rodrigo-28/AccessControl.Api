@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Infrastructure
 builder.Services.AddInfrastructureServices();
+builder.Services.AddCustomAuth(builder.Configuration);
 //applicationServices
 builder.Services.AddApplicationServices();
 
@@ -23,6 +24,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddCustomValidators();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
 
 
 //automapper

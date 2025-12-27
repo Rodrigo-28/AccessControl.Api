@@ -22,6 +22,9 @@ namespace AccessControlApi.Application.Services
             this._passwordEncryptionService = passwordEncryptionService;
             this._rolRepository = rolRepository;
         }
+
+
+
         public async Task<UserResponseDto> Create(CreateUserDto createUserDto)
         {
             var userExist = await _userRepository.GetOneByEmail(createUserDto.Email);
@@ -88,10 +91,7 @@ namespace AccessControlApi.Application.Services
             return user;
         }
 
-        public Task<bool> IsFirstLogin(int userId)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public async Task<UserResponseDto> Update(int userId, UpdateUserDto updateUserDto)
         {
@@ -123,6 +123,37 @@ namespace AccessControlApi.Application.Services
             var updateUser = _mapper.Map(updateUserDto, user);
             await _userRepository.Update(updateUser);
             return _mapper.Map<UserResponseDto>(updateUser);
+        }
+
+        public async Task<bool> VerifyPassword(int userId, string password)
+        {
+            var user = await _userRepository.GetOne(userId);
+            if (user == null)
+            {
+                throw new BadRequestException("user not exists")
+                {
+                    ErrorCode = "000"
+                };
+            }
+            var isValid = _passwordEncryptionService.VerifyPassword(password, user.Password);
+            return isValid;
+        }
+        public async Task<GenericResponseDto> ChangePassword(int userId, string password)
+        {
+            var user = await _userRepository.GetOne(userId);
+            if (user == null)
+            {
+                throw new BadRequestException("user not exists")
+                {
+                    ErrorCode = "000"
+                };
+            }
+            var hashedPassword = _passwordEncryptionService.HashPassword(password);
+            user.Password = hashedPassword;
+            await _userRepository.Update(user);
+
+
+            return new GenericResponseDto { Success = true };
         }
     }
 }

@@ -13,6 +13,8 @@ namespace AccessControlApi.Application.Interfaces
         Task<UserResponseDto> Update(int userId, UpdateUserDto updateUserDto);
         Task<GenericResponseDto> Delete(int userId);
         Task<User> GetOneByEmail(string email);
-        Task<bool> IsFirstLogin(int userId);
+
+        Task<bool> VerifyPassword(int userId, string password);
+        Task<GenericResponseDto> ChangePassword(int userId, string password);
     }
 }

@@ -18,6 +18,23 @@ namespace AccessControlApi.Application.Services
             this._passwordEncryptionService = passwordEncryptionService;
             this._jwtTokenService = jwtTokenService;
         }
+
+        public async Task<GenericResponseDto> ChangePassword(ChangePasswordRequestDto changePasswordRequestDto, int userId)
+        {
+            var isPasswordValid = await _userService.VerifyPassword(userId, changePasswordRequestDto.CurrentPassword);
+            if (isPasswordValid)
+            {
+                throw new BadRequestException("Invalid password")
+                {
+                    ErrorCode = "001"
+                };
+            }
+            await _userService.ChangePassword(userId, changePasswordRequestDto.NewPassword);
+
+
+            return new GenericResponseDto { Success = true };
+        }
+
         public async Task<LoginResponseDto> Login(LoginRequestDto userDto)
         {
             var user = await _userService.GetOneByEmail(userDto.Email);
