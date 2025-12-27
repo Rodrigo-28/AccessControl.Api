@@ -46,7 +46,7 @@ namespace AccessControlApi.Controllers
                 };
             }
             var userId = UserHelper.GetRequiredUserId(User);
-            var response = await _authService.ChangePassword(changePasswordRequestDto);
+            var response = await _authService.ChangePassword(changePasswordRequestDto, userId);
             return Ok(response);
         }
     }

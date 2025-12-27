@@ -150,6 +150,10 @@ namespace AccessControlApi.Application.Services
             }
             var hashedPassword = _passwordEncryptionService.HashPassword(password);
             user.Password = hashedPassword;
+            if (user.FirstLogin)
+            {
+                user.FirstLogin = false;
+            }
             await _userRepository.Update(user);
 
 

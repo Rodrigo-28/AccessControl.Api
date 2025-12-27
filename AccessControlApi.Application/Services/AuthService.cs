@@ -22,13 +22,14 @@ namespace AccessControlApi.Application.Services
         public async Task<GenericResponseDto> ChangePassword(ChangePasswordRequestDto changePasswordRequestDto, int userId)
         {
             var isPasswordValid = await _userService.VerifyPassword(userId, changePasswordRequestDto.CurrentPassword);
-            if (isPasswordValid)
+            if (!isPasswordValid)
             {
                 throw new BadRequestException("Invalid password")
                 {
                     ErrorCode = "001"
                 };
             }
+
             await _userService.ChangePassword(userId, changePasswordRequestDto.NewPassword);
 
 

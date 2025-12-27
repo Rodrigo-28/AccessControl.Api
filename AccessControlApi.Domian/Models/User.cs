@@ -16,7 +16,7 @@ namespace AccessControlApi.Domian.Models
         [Column("deleted")]
         public bool Deleted { get; set; } = false;
         [Column("first_login")]
-        public bool FirstLogin { get; set; } = false;
+        public bool FirstLogin { get; set; } = true;
         [Column("role_id")]
         public int RoleId { get; set; }
         public Role Role { get; set; }
