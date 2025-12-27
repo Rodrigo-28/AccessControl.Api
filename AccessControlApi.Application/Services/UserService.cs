@@ -14,12 +14,14 @@ namespace AccessControlApi.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPasswordEncryptionService _passwordEncryptionService;
+        private readonly IRolRepository _rolRepository;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordEncryptionService passwordEncryptionService)
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordEncryptionService passwordEncryptionService, IRolRepository rolRepository)
         {
             this._userRepository = userRepository;
             this._mapper = mapper;
             this._passwordEncryptionService = passwordEncryptionService;
+            this._rolRepository = rolRepository;
         }
         public async Task<UserResponseDto> Create(CreateUserDto createUserDto)
         {
@@ -49,7 +51,9 @@ namespace AccessControlApi.Application.Services
                     ErrorCode = "005"
                 };
             }
+
             await _userRepository.Delete(user);
+
             return new GenericResponseDto { Success = true };
         }
 
@@ -96,7 +100,22 @@ namespace AccessControlApi.Application.Services
                 };
             }
 
-            updateUserDto.Password = _passwordEncryptionService.HashPassword(updateUserDto.Password);
+            if (updateUserDto.Password != null)
+            {
+                updateUserDto.Password =
+                    _passwordEncryptionService.HashPassword(updateUserDto.Password);
+            }
+            if (updateUserDto.RoleId.HasValue)
+            {
+                var roleExists = await _rolRepository.GetOne(updateUserDto.RoleId.Value);
+                if (roleExists == null)
+                {
+                    throw new BadRequestException("Invalid role");
+                }
+
+                user.RoleId = updateUserDto.RoleId.Value;
+            }
+
             var updateUser = _mapper.Map(updateUserDto, user);
             await _userRepository.Update(updateUser);
             return _mapper.Map<UserResponseDto>(updateUser);

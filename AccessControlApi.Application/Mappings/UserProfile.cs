@@ -14,7 +14,22 @@ namespace AccessControlApi.Application.Mappings
      .ForMember(dest => dest.Role,
                 opt => opt.MapFrom(src => src.Role.Name));
             CreateMap<CreateUserDto, User>();
-            CreateMap<UpdateUserDto, User>();
+
+
+            CreateMap<UpdateUserDto, User>()
+     .ForMember(dest => dest.RoleId, opt => opt.Ignore())
+     .ForAllMembers(opt =>
+         opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            //roles
+            CreateMap<Role, RoleResponseDto>();
+
+            CreateMap<CreateRoleDto, Role>();
+
+            CreateMap<UpdateRoleDto, Role>()
+                .ForAllMembers(opt =>
+                    opt.Condition((src, dest, srcMember) => srcMember != null));
+
         }
     }
 }

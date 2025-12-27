@@ -22,6 +22,13 @@ namespace AccessControlApi.Infrastructure.Repositories
             return role;
         }
 
+        public async Task<bool> Delete(Role role)
+        {
+            _context.Roles.Remove(role);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<IEnumerable<Role>> GetAll()
         {
             return await _context.Roles.ToListAsync();
@@ -45,5 +52,6 @@ namespace AccessControlApi.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return role;
         }
+
     }
 }

@@ -23,19 +23,21 @@ namespace AccessControlApi.Infrastructure.Repositories
 
         public async Task<bool> Delete(User user)
         {
-            _context.Users.Remove(user);
+            user.Deleted = true;
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<IEnumerable<User>> GetAll()
         {
-            return await _context.Users.ToListAsync();
+
+            return await _context.Users.Where(u => !u.Deleted).ToListAsync();
         }
 
         public async Task<User?> GetOne(int userId)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.Deleted);
         }
 
         public async Task<User?> GetOne(Expression<Func<User, bool>> predicate)
@@ -58,6 +60,7 @@ namespace AccessControlApi.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetAllWithRoles()
         {
             return await _context.Users
+                .Where(u => !u.Deleted)
                 .Include(u => u.Role)
                 .ToListAsync();
         }

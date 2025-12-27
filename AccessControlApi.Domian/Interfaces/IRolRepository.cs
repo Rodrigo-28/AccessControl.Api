@@ -10,5 +10,6 @@ namespace AccessControlApi.Domian.Interfaces
         Task<Role> GetOne(Expression<Func<Role, bool>> predicate);
         Task<IEnumerable<Role>> GetAll();
         Task<Role> Update(Role role);
+        Task<bool> Delete(Role role);
     }
 }
