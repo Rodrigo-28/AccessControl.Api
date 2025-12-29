@@ -4,28 +4,32 @@ using AccessControlApi.Application.Eceptions;
 using AccessControlApi.Application.Interfaces;
 using AccessControlApi.Domian.Interfaces;
 using AccessControlApi.Domian.Models;
+
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AccessControlApi.Application.Services
 {
-    public class UserService : IUserService
+    public class UserService
+     : BaseService<User, UserResponseDto, CreateUserDto, UpdateUserDto>,
+       IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
         private readonly IPasswordEncryptionService _passwordEncryptionService;
         private readonly IRolRepository _rolRepository;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordEncryptionService passwordEncryptionService, IRolRepository rolRepository)
+        public UserService(IUserRepository userRepository,
+        IMapper mapper,
+        IPasswordEncryptionService passwordEncryptionService,
+        IRolRepository rolRepository) : base(userRepository, mapper)
         {
-            this._userRepository = userRepository;
-            this._mapper = mapper;
-            this._passwordEncryptionService = passwordEncryptionService;
-            this._rolRepository = rolRepository;
+            _userRepository = userRepository;
+            _passwordEncryptionService = passwordEncryptionService;
+            _rolRepository = rolRepository;
         }
 
 
-
-        public async Task<UserResponseDto> Create(CreateUserDto createUserDto)
+        public override async Task<UserResponseDto> Create(CreateUserDto createUserDto)
         {
             var userExist = await _userRepository.GetOneByEmail(createUserDto.Email);
             if (userExist != null)
@@ -35,46 +39,35 @@ namespace AccessControlApi.Application.Services
                     ErrorCode = "006"
                 };
             }
-            var newUser = _mapper.Map<User>(createUserDto);
-            newUser.Password = _passwordEncryptionService.HashPassword(createUserDto.Password);
-
-            var createdUser = await _userRepository.Create(newUser);
-            var userWithRole = await _userRepository.GetOneWithRole(createdUser.Id);
+            var user = _mapper.Map<User>(createUserDto);
+            user.Password = _passwordEncryptionService.HashPassword(createUserDto.Password);
+            var created = await _userRepository.Create(user);
+            var userWithRole = await _userRepository.GetOneWithRole(created.Id);
             return _mapper.Map<UserResponseDto>(userWithRole);
         }
 
-        public async Task<GenericResponseDto> Delete(int userId)
+
+
+
+        public override async Task<IEnumerable<UserResponseDto>> GetAll()
         {
-            var user = await _userRepository.GetOne(userId);
-            if (user == null)
-            {
-                throw new NotFoundException($"user of id {userId} does not exist ")
-                {
-                    ErrorCode = "005"
-                };
-            }
-
-            await _userRepository.Delete(user);
-
-            return new GenericResponseDto { Success = true };
-        }
-
-        public async Task<IEnumerable<UserResponseDto>> GetAll()
-        {
-            var users = await _userRepository.GetAllWithRoles();
+            var users = await _userRepository.GetAll(q =>
+                  q.Include(u => u.Role)
+              );
             return _mapper.Map<IEnumerable<UserResponseDto>>(users);
         }
 
         public async Task<UserResponseDto> GetOne(int userId)
         {
-            var user = await _userRepository.GetOne(userId);
+            var user = await _userRepository.GetOne(userId, q => q.Include(u => u.Role));
             if (user == null)
             {
-                throw new NotFoundException($"user of id {userId} does not exist ")
+                throw new NotFoundException($"user of id {userId} does not exist")
                 {
                     ErrorCode = "005"
                 };
             }
+
             return _mapper.Map<UserResponseDto>(user);
         }
 
@@ -95,15 +88,15 @@ namespace AccessControlApi.Application.Services
 
         public async Task<UserResponseDto> Update(int userId, UpdateUserDto updateUserDto)
         {
-            var user = await _userRepository.GetOneWithRole(userId);
+            var user = await _userRepository.GetOne(userId);
+
             if (user == null)
             {
-                throw new NotFoundException($"user of id {userId} does not exist ")
+                throw new NotFoundException($"user of id {userId} does not exist")
                 {
                     ErrorCode = "005"
                 };
             }
-
             if (updateUserDto.Password != null)
             {
                 updateUserDto.Password =
@@ -116,13 +109,13 @@ namespace AccessControlApi.Application.Services
                 {
                     throw new BadRequestException("Invalid role");
                 }
-
                 user.RoleId = updateUserDto.RoleId.Value;
             }
+            _mapper.Map(updateUserDto, user);
 
-            var updateUser = _mapper.Map(updateUserDto, user);
-            await _userRepository.Update(updateUser);
-            return _mapper.Map<UserResponseDto>(updateUser);
+            var updated = await _userRepository.Update(user);
+
+            return _mapper.Map<UserResponseDto>(updated);
         }
 
         public async Task<bool> VerifyPassword(int userId, string password)

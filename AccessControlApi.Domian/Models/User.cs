@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using AccessControlApi.Domian.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AccessControlApi.Domian.Models
 {
     [Table("users")]
-    public class User
+    public class User : BaseModel, ISoftDeletable
     {
-        [Column("user_id")]
-        public int Id { get; set; }
+
         [Column("username")]
         public string Username { get; set; }
         [Column("email")]

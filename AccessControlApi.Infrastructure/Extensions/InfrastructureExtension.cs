@@ -9,7 +9,7 @@ namespace AccessControlApi.Infrastructure.Extensions
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserReposirtory>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRolRepository, RolRepository>();
             services.AddScoped<IPasswordEncryptionService, PasswordEncryptionService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();

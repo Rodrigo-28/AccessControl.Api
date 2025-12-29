@@ -17,12 +17,25 @@ namespace AccessControlApi.Infrastructure.Contexts
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>(entity =>
             {
+                entity.HasKey(u => u.Id);
+
+                entity.Property(u => u.Id)
+                      .HasColumnName("user_id");
+
                 entity
                     .HasOne(u => u.Role)
                     .WithMany(r => r.Users)
                     .HasForeignKey(u => u.RoleId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+
+                entity.Property(r => r.Id)
+                      .HasColumnName("role_id");
             });
 
             modelBuilder.Entity<Role>().HasData(
