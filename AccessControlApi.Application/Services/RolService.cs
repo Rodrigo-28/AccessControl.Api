@@ -5,102 +5,66 @@ using AccessControlApi.Application.Interfaces;
 using AccessControlApi.Domian.Interfaces;
 using AccessControlApi.Domian.Models;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AccessControlApi.Application.Services
 {
-    public class RolService : IRolService
+    public class RolService : BaseService<Role, RoleResponseDto, CreateRoleDto, UpdateRoleDto>,
+      IRolService
     {
         private readonly IRolRepository _rolRepository;
-        private readonly IMapper _mapper;
 
         public RolService(IRolRepository rolRepository, IMapper mapper)
+            : base(rolRepository, mapper)
         {
-            this._rolRepository = rolRepository;
-            this._mapper = mapper;
-        }
-        public async Task<RoleResponseDto?> Create(CreateRoleDto createRoleDto)
-        {
-            var existingRole = await _rolRepository.GetOne(r => r.Name == createRoleDto.Name);
-            if (existingRole != null)
-            {
-                throw new BadRequestException("Role already exists")
-                {
-                    ErrorCode = "007"
-                };
-            }
-            var role = _mapper.Map<Role>(createRoleDto);
-            var createRole = await _rolRepository.Create(role);
-            return _mapper.Map<RoleResponseDto>(createRole);
+            _rolRepository = rolRepository;
         }
 
-        public async Task<GenericResponseDto> Delete(int roleId)
+        public override async Task<RoleResponseDto> Create(CreateRoleDto dto)
         {
-            var rol = await _rolRepository.GetOne(roleId);
-            if (rol == null)
-            {
-                throw new NotFoundException($"rol of id {roleId} does not exist ")
-                {
-                    ErrorCode = "009"
-                };
-            }
-            if (rol.Users != null && rol.Users.Any())
-            {
-                throw new BadRequestException("Cannot delete role with assigned users");
-            }
+            var exists = await _rolRepository.GetByName(dto.Name);
+            if (exists != null)
+                throw new BadRequestException("Role already exists");
 
-            await _rolRepository.Delete(rol);
-            return new GenericResponseDto { Success = true };
+            return await base.Create(dto);
         }
-
-        public async Task<IEnumerable<RoleResponseDto>> GetAll()
+        public override async Task<RoleResponseDto> Update(int id, UpdateRoleDto dto)
         {
-            var role = await _rolRepository.GetAll();
-            return _mapper.Map<IEnumerable<RoleResponseDto>>(role);
-        }
-
-        public async Task<RoleResponseDto?> GetOne(int rolId)
-        {
-            var role = await _rolRepository.GetOne(rolId);
-            if (role == null)
+            if (dto.Name != null)
             {
-                throw new NotFoundException($"Role with id {rolId} not found")
-                {
-                    ErrorCode = "008"
-                };
-            }
-            return _mapper.Map<RoleResponseDto>(role);
-
-        }
-
-        public async Task<RoleResponseDto> Update(int roleId, UpdateRoleDto updateRoleDto)
-        {
-            var role = await _rolRepository.GetOne(roleId);
-
-            if (role == null)
-            {
-                throw new NotFoundException($"Role with id {roleId} not found")
-                {
-                    ErrorCode = "007"
-                };
-            }
-            if (updateRoleDto.Name != null)
-            {
-                var exists = await _rolRepository.GetOne(
-                    r => r.Name == updateRoleDto.Name && r.Id != roleId);
+                var exists = await _rolRepository.ExistsWithNameExceptId(dto.Name, id);
 
                 if (exists != null)
-                {
                     throw new BadRequestException("Role name already exists");
-                }
             }
-            _mapper.Map(updateRoleDto, role);
 
-            var updatedRole = await _rolRepository.Update(role);
-
-            return _mapper.Map<RoleResponseDto>(updatedRole);
-
+            return await base.Update(id, dto);
         }
+        public override async Task<GenericResponseDto> Delete(int id)
+        {
+            var role = await _rolRepository.GetOne(
+                id, q => q.Include(r => r.Users));
 
+            if (role == null)
+            {
+
+                throw new NotFoundException("Role not found")
+                {
+                    ErrorCode = "011"
+                };
+            }
+
+            if (role.Users.Any())
+            {
+                throw new BadRequestException("Cannot delete role with assigned users")
+                {
+                    ErrorCode = "012"
+                };
+
+            }
+
+            return await base.Delete(id);
+        }
 
     }
 }

@@ -24,7 +24,7 @@ namespace AccessControlApi.Controllers
             var user = await _userService.GetOne(userId);
             return Ok(user);
         }
-        [Authorize(Policy = "Admin")]
+        //[Authorize(Policy = "Admin")]
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserDto createUserDto, IValidator<CreateUserDto> validator)

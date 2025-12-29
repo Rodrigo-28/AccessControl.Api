@@ -1,15 +1,11 @@
 ﻿using AccessControlApi.Domian.Models;
-using System.Linq.Expressions;
 
 namespace AccessControlApi.Domian.Interfaces
 {
-    public interface IRolRepository
+    public interface IRolRepository : IBaseRepository<Role>
     {
-        Task<Role> Create(Role role);
-        Task<Role> GetOne(int RolId);
-        Task<Role> GetOne(Expression<Func<Role, bool>> predicate);
-        Task<IEnumerable<Role>> GetAll();
-        Task<Role> Update(Role role);
-        Task<bool> Delete(Role role);
+        Task<Role?> GetByName(string name);
+        Task<bool> ExistsWithNameExceptId(string name, int excludedId);
+
     }
 }

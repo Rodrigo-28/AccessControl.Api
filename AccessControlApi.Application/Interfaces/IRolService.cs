@@ -1,16 +1,12 @@
 ﻿using AccessControlApi.Application.Dtos.Requests;
 using AccessControlApi.Application.Dtos.Responses;
+using AccessControlApi.Domian.Models;
 
 namespace AccessControlApi.Application.Interfaces
 {
-    public interface IRolService
+    public interface IRolService : IBaseService<Role, RoleResponseDto, CreateRoleDto, UpdateRoleDto>
     {
-        Task<RoleResponseDto?> GetOne(int rolId);
-        Task<IEnumerable<RoleResponseDto>> GetAll();
 
-        Task<RoleResponseDto?> Create(CreateRoleDto createRoleDto);
-        Task<RoleResponseDto> Update(int roleId, UpdateRoleDto updateRoleDto);
-        Task<GenericResponseDto> Delete(int roleId);
 
     }
 }
