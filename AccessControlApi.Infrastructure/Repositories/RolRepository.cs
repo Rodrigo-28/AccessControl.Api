@@ -36,7 +36,9 @@ namespace AccessControlApi.Infrastructure.Repositories
 
         public async Task<Role> GetOne(int RolId)
         {
-            var rol = await _context.Roles.FirstOrDefaultAsync(r => r.Id == RolId);
+            var rol = await _context.Roles.
+                Include(r => r.Users)
+                .FirstOrDefaultAsync(r => r.Id == RolId);
             return rol;
         }
 

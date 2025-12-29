@@ -36,7 +36,9 @@ namespace AccessControlApi.Infrastructure.Repositories
 
         public async Task<User?> GetOne(int userId)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.Deleted);
+            return await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId && !u.Deleted);
         }
 
 

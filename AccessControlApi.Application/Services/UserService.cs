@@ -135,7 +135,7 @@ namespace AccessControlApi.Application.Services
                     ErrorCode = "000"
                 };
             }
-            var isValid = _passwordEncryptionService.VerifyPassword(password, user.Password);
+            var isValid = _passwordEncryptionService.VerifyPassword(user.Password, password);
             return isValid;
         }
         public async Task<GenericResponseDto> ChangePassword(int userId, string password)

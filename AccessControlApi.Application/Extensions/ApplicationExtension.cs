@@ -10,6 +10,7 @@ namespace AccessControlApi.Application.Extensions
         {
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IRolService, RolService>();
             return services;
         }
     }
