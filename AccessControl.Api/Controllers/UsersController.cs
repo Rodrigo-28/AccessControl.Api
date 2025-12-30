@@ -51,6 +51,15 @@ namespace AccessControlApi.Controllers
         }
         [Authorize(Policy = "Admin")]
 
+        [HttpGet("list")]
+        public async Task<IActionResult> GetList([FromQuery] int page, [FromQuery] int pageSize)
+        {
+            var users = await _userService.GetList(page, pageSize);
+            return Ok(users);
+        }
+
+        [Authorize(Policy = "Admin")]
+
         [HttpPut("{userId}")]
         public async Task<IActionResult> Update(int userId, [FromBody] UpdateUserDto updateUserDto, IValidator<UpdateUserDto> validator)
         {

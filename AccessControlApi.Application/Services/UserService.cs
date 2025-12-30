@@ -2,6 +2,7 @@
 using AccessControlApi.Application.Dtos.Responses;
 using AccessControlApi.Application.Eceptions;
 using AccessControlApi.Application.Interfaces;
+using AccessControlApi.Domian.Common;
 using AccessControlApi.Domian.Interfaces;
 using AccessControlApi.Domian.Models;
 using AutoMapper;
@@ -158,6 +159,13 @@ namespace AccessControlApi.Application.Services
 
 
             return new GenericResponseDto { Success = true };
+        }
+
+        public async Task<GenericListResponse<UserResponseDto>> GetList(int page, int pageSize)
+        {
+            var users = await _userRepository.GetList(page, pageSize);
+
+            return _mapper.Map<GenericListResponse<UserResponseDto>>(users);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AccessControlApi.Application.Dtos.Requests;
 using AccessControlApi.Application.Dtos.Responses;
+using AccessControlApi.Domian.Common;
 using AccessControlApi.Domian.Models;
 using AutoMapper;
 
@@ -29,6 +30,8 @@ namespace AccessControlApi.Application.Mappings
             CreateMap<UpdateRoleDto, Role>()
                 .ForAllMembers(opt =>
                     opt.Condition((src, dest, srcMember) => srcMember != null));
+            //pagination
+            CreateMap<GenericListResponse<User>, GenericListResponse<UserResponseDto>>();
 
 
         }

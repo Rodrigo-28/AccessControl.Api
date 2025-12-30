@@ -1,5 +1,6 @@
 ﻿using AccessControlApi.Application.Dtos.Requests;
 using AccessControlApi.Application.Dtos.Responses;
+using AccessControlApi.Domian.Common;
 using AccessControlApi.Domian.Models;
 
 namespace AccessControlApi.Application.Interfaces
@@ -16,5 +17,6 @@ namespace AccessControlApi.Application.Interfaces
 
         Task<bool> VerifyPassword(int userId, string password);
         Task<GenericResponseDto> ChangePassword(int userId, string password);
+        Task<GenericListResponse<UserResponseDto>> GetList(int page, int pageSize);
     }
 }
