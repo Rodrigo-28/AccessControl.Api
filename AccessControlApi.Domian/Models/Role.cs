@@ -10,6 +10,8 @@ namespace AccessControlApi.Domian.Models
         public int Id { get; set; }
         [Column("name")]
         public string Name { get; set; }
+        [Column("deleted")]
+        public bool Deleted { get; set; } = false;
         public ICollection<User> Users { get; set; }
     }
 }

@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 
 namespace AccessControlApi.Infrastructure.Repositories
 {
-    public class RolRepository : IRolRepository
+    public class RoleRepository : IRolRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public RolRepository(ApplicationDbContext context)
+        public RoleRepository(ApplicationDbContext context)
         {
             this._context = context;
         }
@@ -24,28 +24,31 @@ namespace AccessControlApi.Infrastructure.Repositories
 
         public async Task<bool> Delete(Role role)
         {
-            _context.Roles.Remove(role);
+            role.Deleted = true;
+            _context.Roles.Update(role);
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<IEnumerable<Role>> GetAll()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Roles
+                .Where(r => !r.Deleted)
+                .ToListAsync();
         }
 
         public async Task<Role> GetOne(int RolId)
         {
-            var rol = await _context.Roles.
-                Include(r => r.Users)
+            var role = await _context.Roles
+                .Where(r => !r.Deleted)
                 .FirstOrDefaultAsync(r => r.Id == RolId);
-            return rol;
+            return role;
         }
 
         public async Task<Role> GetOne(Expression<Func<Role, bool>> predicate)
         {
-            var rol = await _context.Roles.FirstOrDefaultAsync(predicate);
-            return rol;
+            var role = await _context.Roles.FirstOrDefaultAsync(predicate);
+            return role;
         }
 
         public async Task<Role> Update(Role role)

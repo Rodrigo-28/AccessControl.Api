@@ -7,11 +7,11 @@ namespace AccessControlApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolController : ControllerBase
+    public class RoleController : ControllerBase
     {
         private readonly IRolService _rolService;
 
-        public RolController(IRolService rolService)
+        public RoleController(IRolService rolService)
         {
             this._rolService = rolService;
         }
@@ -43,6 +43,13 @@ namespace AccessControlApi.Controllers
             var role = await _rolService.Delete(roleId);
             return Ok(role);
 
+        }
+        [Authorize(Policy = "Admin")]
+        [HttpPut("{roleId}")]
+        public async Task<IActionResult> Update(int roleId, [FromBody] UpdateRoleDto updateRoleDto)
+        {
+            var role = await _rolService.Update(roleId, updateRoleDto);
+            return Ok(role);
         }
     }
 }

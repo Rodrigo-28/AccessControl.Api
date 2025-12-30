@@ -43,10 +43,7 @@ namespace AccessControlApi.Application.Services
                     ErrorCode = "009"
                 };
             }
-            if (rol.Users != null && rol.Users.Any())
-            {
-                throw new BadRequestException("Cannot delete role with assigned users");
-            }
+
 
             await _rolRepository.Delete(rol);
             return new GenericResponseDto { Success = true };
