@@ -70,12 +70,27 @@ namespace AccessControlApi.Infrastructure.Repositories
             return await _context.Users.Where(u => u.Email == email && !u.Deleted).FirstOrDefaultAsync();
         }
 
-        public async Task<GenericListResponse<User>> GetList(int page, int pageSize)
+        public async Task<GenericListResponse<User>> GetList(int page, int pageSize, int? roleId, string? email)
         {
+
+
+
+
             IQueryable<User> query = _context.Users
                 .Include(u => u.Role)
                 .Where(u => !u.Deleted)
                 ;
+
+            if (roleId != null)
+            {
+                query = query.Where(u => u.RoleId == roleId);
+
+            }
+            if (email != null)
+            {
+                query = query.Where(u => u.Email.ToLower().StartsWith(email.ToLower()));
+
+            }
 
             //Pagination
             int total = await query.CountAsync();

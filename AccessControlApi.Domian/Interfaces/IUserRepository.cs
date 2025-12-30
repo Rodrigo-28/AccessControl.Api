@@ -13,7 +13,7 @@ namespace AccessControlApi.Domian.Interfaces
         Task<bool> Delete(User user);
         Task<User?> GetOneWithRole(int userId);
         Task<IEnumerable<User>> GetAllWithRoles();
-        Task<GenericListResponse<User>> GetList(int page, int pageSize);
+        Task<GenericListResponse<User>> GetList(int page, int pageSize, int? roleId, string? email);
 
     }
 }

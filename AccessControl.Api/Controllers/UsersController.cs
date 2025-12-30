@@ -52,9 +52,11 @@ namespace AccessControlApi.Controllers
         [Authorize(Policy = "Admin")]
 
         [HttpGet("list")]
-        public async Task<IActionResult> GetList([FromQuery] int page, [FromQuery] int pageSize)
+        public async Task<IActionResult> GetList([FromQuery] int page, [FromQuery] int pageSize,
+
+            [FromQuery] int? roleId, [FromQuery] string? email)
         {
-            var users = await _userService.GetList(page, pageSize);
+            var users = await _userService.GetList(page, pageSize, roleId, email);
             return Ok(users);
         }
 

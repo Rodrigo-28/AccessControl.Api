@@ -161,9 +161,11 @@ namespace AccessControlApi.Application.Services
             return new GenericResponseDto { Success = true };
         }
 
-        public async Task<GenericListResponse<UserResponseDto>> GetList(int page, int pageSize)
+
+
+        public async Task<GenericListResponse<UserResponseDto>> GetList(int page, int pageSize, int? roleId, string? email)
         {
-            var users = await _userRepository.GetList(page, pageSize);
+            var users = await _userRepository.GetList(page, pageSize, roleId, email);
 
             return _mapper.Map<GenericListResponse<UserResponseDto>>(users);
         }

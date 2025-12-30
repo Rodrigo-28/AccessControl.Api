@@ -17,6 +17,6 @@ namespace AccessControlApi.Application.Interfaces
 
         Task<bool> VerifyPassword(int userId, string password);
         Task<GenericResponseDto> ChangePassword(int userId, string password);
-        Task<GenericListResponse<UserResponseDto>> GetList(int page, int pageSize);
+        Task<GenericListResponse<UserResponseDto>> GetList(int page, int pageSize, int? roleId, string? email);
     }
 }
