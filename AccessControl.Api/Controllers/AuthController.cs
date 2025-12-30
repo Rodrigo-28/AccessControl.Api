@@ -49,5 +49,19 @@ namespace AccessControlApi.Controllers
             var response = await _authService.ChangePassword(changePasswordRequestDto, userId);
             return Ok(response);
         }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, IValidator<RegisterDto> validator)
+        {
+            var validationResult = await validator.ValidateAsync(registerDto);
+            if (!validationResult.IsValid)
+            {
+                throw new BadRequestException(validationResult.ToString())
+                {
+                    ErrorCode = "004"
+                };
+            }
+            var response = await _authService.Register(registerDto);
+            return Ok(response);
+        }
     }
 }

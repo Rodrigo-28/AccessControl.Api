@@ -7,5 +7,6 @@ namespace AccessControlApi.Application.Interfaces
     {
         Task<LoginResponseDto> Login(LoginRequestDto userDto);
         Task<GenericResponseDto> ChangePassword(ChangePasswordRequestDto changePasswordRequestDto, int userId);
+        Task<GenericResponseDto> Register(RegisterDto registerDto);
     }
 }

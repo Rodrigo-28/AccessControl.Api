@@ -11,6 +11,7 @@ namespace AccessControlApi.Extensions
             services.AddValidatorsFromAssemblyContaining<LoginValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
             services.AddValidatorsFromAssemblyContaining<UpdateUserDto>();
+            services.AddValidatorsFromAssemblyContaining<RegisterDto>();
 
 
             return services;

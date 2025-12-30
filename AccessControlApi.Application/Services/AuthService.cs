@@ -2,6 +2,7 @@
 using AccessControlApi.Application.Dtos.Responses;
 using AccessControlApi.Application.Eceptions;
 using AccessControlApi.Application.Interfaces;
+using AccessControlApi.Domian.Enums;
 using AccessControlApi.Domian.Interfaces;
 
 namespace AccessControlApi.Application.Services
@@ -60,6 +61,18 @@ namespace AccessControlApi.Application.Services
             var token = _jwtTokenService.GenerateJwtToken(user);
             return new LoginResponseDto { Token = token, FirstLogin = user.FirstLogin };
 
+        }
+
+        public async Task<GenericResponseDto> Register(RegisterDto registerDto)
+        {
+            CreateUserDto createUserDto = new CreateUserDto();
+            createUserDto.Username = registerDto.Username;
+            createUserDto.Email = registerDto.Email;
+            createUserDto.Password = registerDto.Password;
+
+            createUserDto.RoleId = (int)UserRole.User;
+            await _userService.Create(createUserDto);
+            return new GenericResponseDto { Success = true };
         }
     }
 }
